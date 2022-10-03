@@ -30,8 +30,20 @@ public class User {
         inverseJoinColumns = @JoinColumn(name = "role_id")
     )
     private Set<Role> roles = new HashSet<>();
+    
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinTable(
+        name = "user_courses",
+        joinColumns = @JoinColumn(name = "user_id"),
+        inverseJoinColumns = @JoinColumn(name = "course_id")
+    )
+    private Set<Course> courses = new HashSet<>();
+
+    @Transient
+    private String role;
 
     public User() {
+        this.roles.add(new Role("USER"));
     }
 
     public User(Long id, String email, String password, String firstName, String lastName, Set<Role>roles) {
@@ -41,13 +53,30 @@ public class User {
         this.firstName = firstName;
         this.lastName = lastName;
         this.roles = roles;
+        this.roles.add(new Role("USER"));
+    }
+    public Set<Course> getCourses(){
+        return this.courses;
+
+    }
+    public void setCourses(Set<Course> courses, Course course){
+        courses.add(course);
+        this.courses = courses;
     }
     public Set<Role> getRoles(){
-        return roles;
+        return this.roles;
     }
-    public void setRoles(Role role){
+    public void setRoles(Set<Role>roles,Role role){
         roles.add(role);
+        this.roles=roles;
 
+    }
+    public String getRole()
+    {
+        return this.role;
+    }
+    public void setRole(String role){
+        this.role = role;
     }
     public Long getId() {
         return this.id;

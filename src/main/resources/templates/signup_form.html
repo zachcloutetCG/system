@@ -10,7 +10,7 @@
 <body>
     <div class="container text-center">
         <div>
-            <h1>User Registration - Sign Up</h1>
+            <h1>User Registration</h1>
         </div>
         <form th:action="@{/process_register}" th:object="${user}"
             method="post" style="max-width: 600px; margin: 0 auto;">
@@ -45,11 +45,23 @@
                             required minlength="2" maxlength="20" />
                 </div>
             </div>
-             
-            <div>
-                <button type="submit" class="btn btn-primary">Sign Up</button>
+            <div class="form-group row">
+                <label class="col-4 col-form-label">Role</label>
+                <div class="col-8">
+                    <select th:field="*{role}">
+                        <option th:value="'USER'" th:text="USER"></option>
+                        <option th:value="'TEACHER'" th:text="TEACHER"></option>
+                        </select>
+                </div>     
             </div>
+            <div>
+                <button type="submit" class="btn btn-primary">Create User</button>
+            </div>
+            
         </div>
+        </form>
+        <form th:action="@{/users}" >
+            <input type="submit" value="Home" />
         </form>
     </div>
 </body>

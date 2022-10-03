@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="ISO-8859-1">
+    <title>Sign Up - CodeJava</title>
+    <link rel="stylesheet" type="text/css" href="/webjars/bootstrap/css/bootstrap.min.css" />
+    <script type="text/javascript" src="/webjars/jquery/jquery.min.js"></script>
+    <script type="text/javascript" src="/webjars/bootstrap/js/bootstrap.min.js"></script>
+</head>
+<body>
+    <div class="container text-center">
+        <div>
+            <h1>Course Enrollment</h1>
+        </div>
+        <form th:action="@{/enroll}" method="post" style="max-width: 600px; margin: 0 auto;">
+        <div class="m-3">
+
+            <div class="form-group row" th:object="${map}">
+                <label class="col-4 col-form-label">User</label>
+                <div class="col-8">
+                    <select th:field="*{userId}" class ="form-control" >
+                        <option th:value="0" ></option>
+                        <option th:each="user : ${listUsers}" th:value="${user.id}" th:text="${user.firstName}+' '+${user.lastName}"></option>
+                        
+                    </select>
+                </div>     
+            </div>
+   
+            <div class="form-group row" th:object="${map}">
+                <label class="col-4 col-form-label">Course</label>
+                <div class="col-8">
+                    <select  th:field="*{courseId}" class ="form-control">
+                        <option th:value="0" ></option>
+                        <option th:each="course : ${listCourses}" th:value="${course.id}" th:text="${course.name}"></option>
+                       
+                    </select>
+                </div>     
+            </div>
+            <div>
+                <button type="submit" class="btn btn-primary">Enroll in Course</button>
+            </div>
+            
+        </div>
+        </form>
+        <form th:action="@{/users}" >
+            <input type="submit" value="Home" />
+        </form>
+    </div>
+</body>
+</html>

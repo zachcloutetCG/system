@@ -8,10 +8,7 @@
     <script type="text/javascript" src="/webjars/bootstrap/js/bootstrap.min.js"></script>
 </head>
 <body>
-<span sec:authentication="principal.authorities">Roles</span>
-<div sec:authorize="hasAnyAuthority('ADMIN')">
-        <a href="/new">Create New Product</a>
-</div>
+
 <div class="container text-center">
     <div>
         <form th:action="@{/logout}" method="post">
@@ -21,30 +18,34 @@
             <input type="submit" value="Sign Out" />
         </form>
     </div>
-    <div>
-        <h1>List of Users</h1>
+    <span sec:authentication="principal.authorities">Roles</span>
+    <div sec:authorize="hasAnyAuthority('ADMIN')">
+        <form th:action="@{/register}" >
+            <input type="submit" value="Create User" />
+        </form>
     </div>
-     
-    <div>
-        <table class="table table-striped table-bordered">
-            <thead class="thead-dark">
-                <tr>
-                    <th>User ID</th>
-                    <th>E-mail</th>
-                    <th>First Name</th>
-                    <th>Last Name</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr th:each="user: ${listUsers}">
-                    <td th:text="${user.id}">User ID</td>
-                    <td th:text="${user.email}">E-mail</td>
-                    <td th:text="${user.firstName}">First Name</td>
-                    <td th:text="${user.lastName}">Last Name</td>
-                </tr>
-            </tbody>
-        </table>
+    <div sec:authorize="hasAnyAuthority('ADMIN')">
+        <form th:action="@{/course_creation_page}" >
+            <input type="submit" value="Create Course" />
+        </form>
+        <form th:action="@{/list_user}" >
+            <input type="submit" value="Edit Users" />
+        </form>
+        <form th:action="@{/course_enroll}" >
+            <input type="submit" value="Enroll" />
+        </form>
     </div>
+    <div sec:authorize="hasAnyAuthority('TEACHER')">
+        <form th:action="@{/course_page}" >
+            <input type="submit" value="Teacher" />
+        </form>
+        
+    </div>
+    <div>
+       
+    </div>
+    
+   
 </div>
 </body>
 </html>
