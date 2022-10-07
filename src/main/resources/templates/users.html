@@ -12,9 +12,7 @@
 <div class="container text-center">
     <div>
         <form th:action="@{/logout}" method="post">
-            <p>
-                Welcome <b>[[${#request.userPrincipal.principal.fullName}]]</b>
-            </p>
+           
             <input type="submit" value="Sign Out" />
         </form>
     </div>
@@ -35,17 +33,23 @@
             <input type="submit" value="Enroll" />
         </form>
     </div>
-    <div sec:authorize="hasAnyAuthority('TEACHER')">
-        <form th:action="@{/course_page}" >
-            <input type="submit" value="Teacher" />
-        </form>
+    <form th:object = "${map}" th:action="@{/view_course}">
+        <div class="container text-center">
         
-    </div>
-    <div>
-       
-    </div>
+            <div class="container text-center">
+                <span>Courses</span> 
+                <select th:field="*{courseId}" style="width: 200px" >
+                    <option th:each="course : ${courseList}" th:value="${course.id}" th:text="${course.name}"></option>   
+                </select>
+                <button type="submit" class="btn btn-primary">Select</button>
+                
+            </div> 
+        </div>
+    </form>
+      
+     
     
-   
+     
 </div>
 </body>
 </html>

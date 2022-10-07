@@ -1,4 +1,4 @@
-package templates;
+package com.login.system;
 
 public class UserToCourseMap {
     private long userId;

@@ -19,7 +19,6 @@
                 <label class="col-4 col-form-label">User</label>
                 <div class="col-8">
                     <select th:field="*{userId}" class ="form-control" >
-                        <option th:value="0" ></option>
                         <option th:each="user : ${listUsers}" th:value="${user.id}" th:text="${user.firstName}+' '+${user.lastName}"></option>
                         
                     </select>
@@ -30,7 +29,6 @@
                 <label class="col-4 col-form-label">Course</label>
                 <div class="col-8">
                     <select  th:field="*{courseId}" class ="form-control">
-                        <option th:value="0" ></option>
                         <option th:each="course : ${listCourses}" th:value="${course.id}" th:text="${course.name}"></option>
                        
                     </select>

@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="ISO-8859-1">
+    <title>List Users</title>
+    <link rel="stylesheet" type="text/css" href="/webjars/bootstrap/css/bootstrap.min.css" />
+    <script type="text/javascript" src="/webjars/jquery/jquery.min.js"></script>
+    <script type="text/javascript" src="/webjars/bootstrap/js/bootstrap.min.js"></script>
+</head>
+<body>
+
+<div class="container text-center">
+    <p th:text="${course.name}">HERE</p>
+    <p th:text="${course.instructor}">HERE</p>
+    <div sec:authorize="hasAnyAuthority('TEACHER')">
+        <form  th:action="@{/create_assignment}" th:object ="${course}" method="post">
+            <input type="hidden" th:field="${course.id}" />
+            <button  type="submit">Create Assignment</button>
+        </form>
+    </div>
+       
+</div>
+<div>
+    <p>Assignments</p>
+    
+</div>
+</body>
+</html>
