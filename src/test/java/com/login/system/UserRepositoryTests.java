@@ -38,11 +38,19 @@ public class UserRepositoryTests {
         //User user2 = new User("instructor@gmail.com", "instructpassword", "student", "buddy", roles);
 
         Course course = new Course();
-        course.setName("Physics 201");
+        course.setName("Physics 2066");
         course.setDepartment("Physics");
         course.setInstructor("George Grass");
 
+        //courseRepo.save(course);
+        Assignment al = new Assignment();
+        al.setName("test2");
+        //al.setCourseId(course.getId());
+        al.setCourse(course);
+        course.addAssignment(al);
         courseRepo.save(course);
+        //entityManager.persist(course);
+
         //Role savedRole = roleRepo.save(role);
         //Role savedRole1 = roleRepo.save(role1);
         //roleRepo.save(role2);

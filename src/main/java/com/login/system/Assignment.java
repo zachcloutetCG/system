@@ -13,15 +13,15 @@ import java.util.*;
 public class Assignment {
 
     @Id
-    @Column(name = "assign_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Transient
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "course_id")
     private Course course;
 
-    @Column(name = "course_id")
-    private Long courseId;
+    @Transient
+    Long courseId;
 
     @Column(name = "assign_name", nullable = false, length=50)
     private String name;
@@ -78,7 +78,7 @@ public class Assignment {
     public void setCourseId(Long courseId) {
         this.courseId = courseId;
     }
-    
+
 
     public Course getCourse() {
         return this.course;

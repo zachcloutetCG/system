@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -20,6 +21,7 @@ import java.sql.Blob;
 import java.sql.SQLException;
 import java.util.Map;
 
+import javax.swing.text.Document;
 
 import org.springframework.util.StringUtils;
 
@@ -41,6 +43,8 @@ import org.springframework.http.*;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.validation.BindingResult;
 //@RestController
+import org.springframework.web.bind.annotation.RequestBody;
+
 @Controller
 public class AppController {
     @Autowired
@@ -83,18 +87,20 @@ public class AppController {
         }
        
     }
+
     @GetMapping("/view_course")
-    public String viewCourse(Model model,@RequestParam Long courseId){
+    public String viewCourse(Model model,@RequestParam Long id){
         //System.out.println(courseId);
-        Course course = courseRepo.getReferenceById(courseId);
-        assignmentRepo.getReferenceById(courseId);
+        Course course = courseRepo.getReferenceById(id);
+        assignmentRepo.getReferenceById(id);
         //course.setAssignments();
         //System.out.println(course.getInstructor());
         model.addAttribute("course",course);
         return "view_course";
     }
+
     @PostMapping("/create_assignment")
-    public String assignmentPage(Model model, Long id){
+    public String createAssignment(Model model, Long id){
         //System.out.println(id);
         Course course = courseRepo.getReferenceById(id);
         model.addAttribute("course",course);
@@ -106,8 +112,7 @@ public class AppController {
     }
     @PostMapping("process_assignment")
     public String processAssignment(Model model,Assignment assignment, @RequestParam("file")MultipartFile file){
-        System.out.println(assignment.getName());        
-        System.out.println(assignment.getCourse().getName());
+
         String fileName = StringUtils.cleanPath(file.getOriginalFilename());
         //assignment.setName(fileName);
         try{
@@ -116,14 +121,39 @@ public class AppController {
             e.printStackTrace();
         }
         assignment.setCourseId(assignment.getCourse().getId());
-        assignmentRepo.save(assignment);
         Course course = assignment.getCourse();
-        //courseRepo.save(course);
+        course.addAssignment(assignment);
+        assignmentRepo.save(assignment);
+        courseRepo.save(course);
 
 
         //assignment.setContent(file);
         return "register_success";
     }
+    
+    @GetMapping("/view_assignment")
+    public String viewAssignment(Model model, @RequestParam(name = "id")Long id){
+        Assignment assignment = assignmentRepo.getReferenceById(id);
+        //System.out.println(assignment.getName());
+        model.addAttribute("assignment", assignment);
+        return "view_assignment";
+
+    }
+
+    // @GetMapping("/download")
+    // public ResponseEntity downloadAssignment(Model model, @RequestParam(name = "id")Long id){
+    //     Assignment assignment = assignmentRepo.getReferenceById(id);
+    //     System.out.println(assignment.getName());
+    //     byte[] doc = assignment.getContent();
+    //     //assignmentRepo.findById(null)
+    //     model.addAttribute("assignment", assignment);
+    //     return ResponseEntity.ok()
+    //     .contentType(MediaType.parseMediaType(.getFileType()))
+    //     .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + dbFile.getFileName() + "\"")
+    //     .body(new ByteArrayResource(dbFile.getData()));
+
+    // }
+    
     @GetMapping("/course_creation_page")
     public String createCourse(Model model){
         model.addAttribute("course", new Course());
@@ -151,17 +181,38 @@ public class AppController {
         model.addAttribute("map", new UserToCourseMap());
         return"list_user";
     }
+
+    @GetMapping("delete_user")
+    public String deleteUser(Model model, Long id){
+        //System.out.println(id);
+        User l =userRepo.getReferenceById(id);
+        userRepo.delete(l);
+        List<User> listUsers = userRepo.findAll();
+        model.addAttribute("listUsers", listUsers);
+        //List<Course> courses = new ArrayList<>(.getCourses());
+        model.addAttribute("map", new UserToCourseMap());
+        return"list_user";
+    }
+
     @GetMapping("/list_courses")
     public String listCourses(Model model,Long userId){
         //System.out.println(userId);
 
         return "list_courses";
     }
-    @PostMapping("/edit_user")
-    public String editUser(Model model, @RequestParam(name = "user")User user){
-        //System.out.println(user);
+    @GetMapping("/edit_user")
+    public String editUser(Model model, Long id){
+        User user =userRepo.getReferenceById(id);
+        model.addAttribute("user", user);
+        model.addAttribute("editedUser",new User());
         return "edit_user";
 
+    }
+    @PostMapping("/process_user")
+    String processEdit(User editedUser){
+
+        System.out.println(editedUser.getEmail());
+        return "list_user";
     }
     @GetMapping("/users")
     public String Users(Model model,Principal principal){

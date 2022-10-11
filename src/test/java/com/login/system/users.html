@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="ISO-8859-1">
+    <title>List Users</title>
+    <link rel="stylesheet" type="text/css" href="/webjars/bootstrap/css/bootstrap.min.css" />
+    <script type="text/javascript" src="/webjars/jquery/jquery.min.js"></script>
+    <script type="text/javascript" src="/webjars/bootstrap/js/bootstrap.min.js"></script>
+</head>
+<body>
+
+<div class="container text-center">
+    <div>
+        <form th:action="@{/logout}" method="post">
+           
+            <input type="submit" value="Sign Out" />
+        </form>
+    </div>
+    <span sec:authentication="principal.authorities">Roles</span>
+    <div sec:authorize="hasAnyAuthority('ADMIN')">
+        <form th:action="@{/register}" >
+            <input type="submit" value="Create User" />
+        </form>
+    </div>
+    <div sec:authorize="hasAnyAuthority('ADMIN')">
+        <form th:action="@{/course_creation_page}" >
+            <input type="submit" value="Create Course" />
+        </form>
+        <form th:action="@{/list_user}" >
+            <input type="submit" value="Edit Users" />
+        </form>
+        <form th:action="@{/course_enroll}" >
+            <input type="submit" value="Enroll" />
+        </form>
+    </div>
+    <form th:object = "${map}" th:action="@{/view_course}">
+        <div class="container text-center">
+        
+            <div class="container text-center">
+                <span>Courses</span> 
+                <select th:field="*{courseId}" style="width: 200px" >
+                    <option th:each="course : ${courseList}" th:value="${course.id}" th:text="${course.name}"></option>   
+                </select>
+                <button type="submit" class="btn btn-primary">Select</button>
+                
+            </div> 
+        </div>
+    </form>
+      
+     
+    
+     
+</div>
+</body>
+</html>

@@ -9,9 +9,10 @@ import java.util.*;
 @Entity
 @Table(name="courses")
 public class Course {
+
     @Id
-    @Column(name = "course_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "course_id")
     private Long id;
 
     @Column(name = "course_name", nullable = false, length=50)
@@ -23,11 +24,9 @@ public class Course {
     @Column(name = "instructor", nullable = false, length=30)
     private String instructor;
 
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinTable(
-        name = "assign_to_courses",
-        joinColumns = @JoinColumn(name = "course_id"),
-        inverseJoinColumns = @JoinColumn(name = "assign_id")
+    @OneToMany(mappedBy = "course",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
     )
     private List<Assignment> assignments = new ArrayList<>();
 
@@ -74,6 +73,14 @@ public class Course {
 
     public void setAssignments(List<Assignment> assignments) {
         this.assignments = assignments;
+    }
+    public void addAssignment(Assignment assignment){
+        assignments.add(assignment);
+        assignment.setCourse(this);
+    }
+    public void removeAssignment(Assignment assignment){
+        assignments.remove(assignment);
+        assignment.setCourse(null);
     }
 
 }
