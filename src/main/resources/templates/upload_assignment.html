@@ -64,16 +64,26 @@ html,body,h1,h2,h3,h4,h5,h6 {font-family: "Roboto", sans-serif;}
     <div class="w3-twothird w3-container">
       <h1 class="w3-text-teal" th:text ="${assignment.name}">Welcome</h1>
       <p th:text="${assignment.description}"></p>
-      <a th:href="@{download(id =${assignment.id})}" th:text="${assignment.fileName}"></a>
       <div sec:authorize="hasAnyAuthority('USER')">
-        <form  th:action="@{/upload_assignment}">
-            <input type="hidden" th:field="${assignment.id}" />
-            <button  type="submit">Submit Assignment</button>
-        </form>
-      </div>
-      <div sec:authorize="hasAnyAuthority('TEACHER')">
+        <form enctype="multipart/form-data" th:action="@{/process_submission}" th:object="${assignment}"
+                method="post" style="max-width: 600px; margin: 0 auto;">
+                <div class="form-group row" >
+                    <input type="hidden" th:field="*{course}" />
+                </div>
+               
+                <div class="m-3">
     
-      </div>
+                    <form enctype="multipart/form-data">
+                        <div class="form-group">
+                            <input type="file" name="file" class="form-control-file">
+                        </div>
+                    </form>
+                        
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                    
+                </div>
+            </form>
+       </div>
     </div>
     
     

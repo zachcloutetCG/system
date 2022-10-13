@@ -6,6 +6,7 @@ import java.util.*;
 
 import org.hibernate.Hibernate;
 
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -55,6 +56,9 @@ public class AppController {
 
     @Autowired
     private AssignmentRepository assignmentRepo;
+
+    @Autowired
+    private SubmissionRepository submissionRepo;
 
 
     @GetMapping("")
@@ -120,39 +124,69 @@ public class AppController {
         }catch (IOException e){
             e.printStackTrace();
         }
+        assignment.setFileName(fileName);
+        assignment.setFileType(file.getContentType());
         assignment.setCourseId(assignment.getCourse().getId());
         Course course = assignment.getCourse();
         course.addAssignment(assignment);
         assignmentRepo.save(assignment);
         courseRepo.save(course);
-
-
         //assignment.setContent(file);
         return "register_success";
     }
-    
+
+    @GetMapping("/upload_assignment")
+    public String uploadAssignment(Model model, @RequestParam(name = "id")Long id){
+        Assignment assignment = assignmentRepo.getReferenceById(id);
+        model.addAttribute("assignment", assignment);
+        return "upload_assignment";
+    }
+
+    @PostMapping("/process_submission")
+    public String processSubmission(Model model,Assignment assignment, @RequestParam("file")MultipartFile file ){
+        String fileName = StringUtils.cleanPath(file.getOriginalFilename());
+        DBFile submission = new DBFile();
+        //assignment.setName(fileName);
+        try{
+            submission.setData(file.getBytes());
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+
+        submission.setFileName(fileName);
+        submission.setFileType(file.getContentType());
+        submission.setAssignId(assignment.getId());
+        
+        submissionRepo.save(submission);
+        model.addAttribute("assignment", assignment);
+        return "register_success";
+    }
     @GetMapping("/view_assignment")
     public String viewAssignment(Model model, @RequestParam(name = "id")Long id){
         Assignment assignment = assignmentRepo.getReferenceById(id);
+        // List<DBFile> submissions = submissionRepo.findByID(id);
+        // for(int i=0;i<submissions.size();i++){
+        //     System.out.println(submissions.get(i));
+        // }
         //System.out.println(assignment.getName());
         model.addAttribute("assignment", assignment);
         return "view_assignment";
 
     }
 
-    // @GetMapping("/download")
-    // public ResponseEntity downloadAssignment(Model model, @RequestParam(name = "id")Long id){
-    //     Assignment assignment = assignmentRepo.getReferenceById(id);
-    //     System.out.println(assignment.getName());
-    //     byte[] doc = assignment.getContent();
-    //     //assignmentRepo.findById(null)
-    //     model.addAttribute("assignment", assignment);
-    //     return ResponseEntity.ok()
-    //     .contentType(MediaType.parseMediaType(.getFileType()))
-    //     .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + dbFile.getFileName() + "\"")
-    //     .body(new ByteArrayResource(dbFile.getData()));
+    @GetMapping("/download")
+    public ResponseEntity downloadAssignment(Model model, @RequestParam(name = "id")Long id){
+        Assignment assignment = assignmentRepo.getReferenceById(id);
+        System.out.println(assignment.getName());
+        byte[] doc = assignment.getContent();
+        //assignmentRepo.findById(null)
+        model.addAttribute("assignment", assignment);
+        return ResponseEntity.ok()
+        .contentType(MediaType.parseMediaType(assignment.getFileType()))
+        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + assignment.getFileName() + "\"")
+        .body(new ByteArrayResource(assignment.getContent()));
 
-    // }
+    }
     
     @GetMapping("/course_creation_page")
     public String createCourse(Model model){
